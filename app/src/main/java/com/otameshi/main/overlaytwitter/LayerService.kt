@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -142,9 +143,11 @@ class LayerService : Service() {
      * オーバーレイ表示を中止する
      */
 
-    private fun suspendOverlay(){
+    fun suspendOverlay(){
+        Log.d("aaaa","suspendOverlayの中")
         item?.run{
             view.floatingWebView.visibility = View.GONE
+            view.viewTest.visibility = View.GONE
         }
     }
     private fun stopOverlay(){
@@ -156,6 +159,7 @@ class LayerService : Service() {
     private  fun restartOverlay(){
         item?.run{
             view.floatingWebView.visibility = View.VISIBLE
+            view.viewTest.visibility = View.VISIBLE
         }
     }
 }

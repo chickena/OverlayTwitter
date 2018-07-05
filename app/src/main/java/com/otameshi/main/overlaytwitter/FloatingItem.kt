@@ -3,13 +3,19 @@ package com.otameshi.main.overlaytwitter
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.Log
-import android.view.*
-import com.otameshi.main.overlaytwitter.R.id.floatingWebView
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import kotlinx.android.synthetic.main.overlay.view.*
 
 class FloatingItem(val windowManager: WindowManager, val view: View) {
     companion object {
         private val TAG = FloatingItem::class.qualifiedName
+        //フローティング画面のonFling処理のフリック判定基準
+        private const val SWIPE_MIN_DISTANCE = 150
+        private const val SWIPE_MAX_OFF_PATH = 100
+        private const val SWIPE_THRESHOLD_VELOCITY = 4000
     }
 
     private val params = WindowManager.LayoutParams(
@@ -95,4 +101,16 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
         operator fun plus(p: Position) = Position(fx + p.fx, fy + p.fy)
         operator fun minus(p: Position) = Position(fx - p.fx, fy - p.fy)
     }
+
+//    private fun setOnGestureListener(){
+//        view.viewTest.setOnGestureListener(object :GestureDetector.SimpleOnGestureListener(){
+//            override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+//                Log.d(TAG,"onFling()")
+//                try{
+//                    val distance_y = Math.abs(e1.y - e2.y)
+//                }
+//                return super.onFling(e1, e2, velocityX, velocityY)
+//            }
+//        })
+//    }
 }
