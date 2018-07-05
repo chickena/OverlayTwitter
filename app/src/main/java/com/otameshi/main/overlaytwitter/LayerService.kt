@@ -80,7 +80,6 @@ class LayerService : Service() {
             val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             settings.javaScriptEnabled = true
             settings.setAppCacheEnabled(true)
-            //ここで呼ぶ？
             loadUrl("https://twitter.com/?lang=ja")
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {

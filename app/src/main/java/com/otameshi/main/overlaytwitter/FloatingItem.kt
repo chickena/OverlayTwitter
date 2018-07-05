@@ -4,7 +4,6 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.util.Log
 import android.view.*
-import com.otameshi.main.overlaytwitter.R.id.floatingWebView
 import kotlinx.android.synthetic.main.overlay.view.*
 
 class FloatingItem(val windowManager: WindowManager, val view: View) {
@@ -13,6 +12,8 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
     }
 
     private val params = WindowManager.LayoutParams(
+            500,
+            1000,
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             if (Build.VERSION.SDK_INT >= 26) {
@@ -20,8 +21,8 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
             } else {
                 WindowManager.LayoutParams.TYPE_PHONE
             },
-            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,FLAG_NOT_TOUCH_MODAL,
-
+//            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             PixelFormat.TRANSLUCENT)
             .apply {
                 gravity = Gravity.TOP or Gravity.START
@@ -35,9 +36,7 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
                 field = value
                 if (value) {
                     val parent = view.parent as ViewGroup
-                    if(parent !=null){
                         parent.removeAllViews()
-                    }
                     windowManager.addView(view, params)
                 } else {
                     windowManager.removeView(view)
