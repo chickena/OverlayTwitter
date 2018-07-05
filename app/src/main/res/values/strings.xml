@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">OverlayTwitter</string>
+    <string name="button1">start</string>
+    <string name="button2">exit</string>
+</resources>
