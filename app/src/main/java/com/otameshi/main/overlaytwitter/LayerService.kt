@@ -24,8 +24,7 @@ class LayerService : Service() {
 
     private val notificationId = Random().nextInt()
     private val channelId = "LayerService_notification_channel"
-    lateinit var manager: NotificationManager
-    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val notifyDescription = "OverlayTwitter"
     val name = "Twitter"
     private var item:FloatingItem? = null
     var videoCustomView: View? = null
@@ -37,9 +36,17 @@ class LayerService : Service() {
         super.onCreate()
         lateinit var channel: NotificationChannel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_LOW
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             channel = NotificationChannel(channelId,name,importance)
-            manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
+            if (manager.getNotificationChannel(channelId) == null) {
+                val mChannel = NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_LOW)
+                mChannel.apply {
+                    description = notifyDescription
+                }
+                manager.createNotificationChannel(mChannel)
+            }
         }
         startNotification()
     }
@@ -57,11 +64,14 @@ class LayerService : Service() {
         val pendingStopIntent = PendingIntent.getService(this,0,stopIntent,0)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val builder = NotificationCompat.Builder(this, channelId)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setSmallIcon(R.drawable.notification_icon_background)
-                    .addAction(1, "一時停止", pendingSuspendIntent)
-                    .addAction(2, "再開", pendingRestartIntent)
-                    .addAction(3, "終了", pendingStopIntent)
+                    .apply{
+                        setContentTitle(LayerService::class.simpleName)
+                        setSmallIcon(R.drawable.notification_icon_background)
+                        addAction(1, "一時停止", pendingSuspendIntent)
+                        addAction(2, "再開", pendingRestartIntent)
+                        addAction(3, "終了", pendingStopIntent)
+                    }
+
             startForeground(notificationId, builder.build())
         }else {
             val notification = Notification.Builder(this)
