@@ -17,6 +17,8 @@ class LayerService : Service() {
     companion object {
         val ACTION_START = "start"
         val ACTION_STOP = "stop"
+        val ACTION_RESTART = "restart"
+        val ACTION_SUSPEND = "suspend"
     }
 
     private val notificationId = Random().nextInt()
@@ -36,13 +38,19 @@ class LayerService : Service() {
      * 通知を表示しフォアグラウンド処理に移行する
      */
     private fun startNotification(){
-        val activityIntent = Intent(this,MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this,0,activityIntent,0)
+        val suspendIntent = Intent(this,LayerService::class.java).setAction(LayerService.ACTION_SUSPEND)
+        val restartIntent = Intent(this,LayerService::class.java).setAction(LayerService.ACTION_RESTART)
+        val stopIntent =  Intent(this,LayerService::class.java).setAction(LayerService.ACTION_STOP)
+        val pendingSuspendIntent = PendingIntent.getService(this,0,suspendIntent,0)
+        val pendingRestartIntent = PendingIntent.getService(this,0,restartIntent,0)
+        val pendingStopIntent = PendingIntent.getService(this,0,stopIntent,0)
         val notification = Notification.Builder(this)
-                .setContentIntent(pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(LayerService::class.simpleName)
                 .setContentText("Service is running.")
+                .addAction(1,"一時停止",pendingSuspendIntent)
+                .addAction(2,"再開",pendingRestartIntent)
+                .addAction(3,"終了",pendingStopIntent)
                 .build()
         startForeground(notificationId,notification)
     }
@@ -54,6 +62,11 @@ class LayerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(intent == null || intent.action == ACTION_START){
             startOverlay()
+        }else if(intent == null || intent.action == ACTION_SUSPEND){
+//            stopSelf()
+            suspendOverlay()
+        }else if(intent == null || intent.action == ACTION_RESTART){
+            restartOverlay()
         }else{
             stopSelf()
         }
@@ -96,10 +109,20 @@ class LayerService : Service() {
      * オーバーレイ表示を中止する
      */
 
+    private fun suspendOverlay(){
+        item?.run{
+            view.floatingWebView.visibility = View.GONE
+        }
+    }
     private fun stopOverlay(){
         item?.run{
             visible = false
         }
         item = null
+    }
+    private  fun restartOverlay(){
+        item?.run{
+            view.floatingWebView.visibility = View.VISIBLE
+        }
     }
 }
