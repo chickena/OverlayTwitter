@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -121,20 +120,17 @@ class LayerService : Service() {
         val view = layoutInflater.inflate(R.layout.overlay,null)
         val setting = view.floatingWebView.settings
         view.floatingWebView.run{
-            view.viewTest.run{
-                val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-                settings.javaScriptEnabled = true
-                settings.setAppCacheEnabled(true)
-                //ここで呼ぶ？
-                loadUrl("https://twitter.com/?lang=ja")
-                webViewClient = object : WebViewClient() {
-                    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                        return false
-                    }
+            val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+            settings.javaScriptEnabled = true
+            settings.setAppCacheEnabled(true)
+            loadUrl("https://twitter.com/?lang=ja")
+            webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                    return false
                 }
-                item = FloatingItem(windowManager,view).apply {
-                    visible = true
-                }
+            }
+            item = FloatingItem(windowManager,view.floatingWebView).apply {
+                visible = true
             }
         }
     }
@@ -143,11 +139,9 @@ class LayerService : Service() {
      * オーバーレイ表示を中止する
      */
 
-    fun suspendOverlay(){
-        Log.d("aaaa","suspendOverlayの中")
+    private fun suspendOverlay(){
         item?.run{
             view.floatingWebView.visibility = View.GONE
-            view.viewTest.visibility = View.GONE
         }
     }
     private fun stopOverlay(){
@@ -159,7 +153,6 @@ class LayerService : Service() {
     private  fun restartOverlay(){
         item?.run{
             view.floatingWebView.visibility = View.VISIBLE
-            view.viewTest.visibility = View.VISIBLE
         }
     }
 }
