@@ -1,12 +1,10 @@
 package com.otameshi.main.overlaytwitter
 
+import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.Log
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import kotlinx.android.synthetic.main.overlay.view.*
 
 class FloatingItem(val windowManager: WindowManager, val view: View) {
@@ -45,6 +43,7 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
                     view.viewTest.layoutParams.width = 400
                     view.floatingWebView.layoutParams.height = 600
                     view.floatingWebView.layoutParams.width =  400
+                    setOnGestureListener()
                     windowManager.addView(view, params)
                 } else {
                     windowManager.removeView(view)
@@ -102,15 +101,49 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
         operator fun minus(p: Position) = Position(fx - p.fx, fy - p.fy)
     }
 
-//    private fun setOnGestureListener(){
-//        view.viewTest.setOnGestureListener(object :GestureDetector.SimpleOnGestureListener(){
-//            override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-//                Log.d(TAG,"onFling()")
-//                try{
-//                    val distance_y = Math.abs(e1.y - e2.y)
-//                }
-//                return super.onFling(e1, e2, velocityX, velocityY)
-//            }
-//        })
-//    }
+    private fun setOnGestureListener(){
+        view.viewTest.setOnGestureListener(object : GestureDetector.SimpleOnGestureListener(){
+            override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+                Log.d(TAG,"onFling()")
+                try{
+                    // 移動距離・スピードを出力
+                    val distance_y = Math.abs(e1.y - e2.y)
+                    val velocity_y = Math.abs(velocityY)
+                    Log.d("MyView_onFling", "縦の移動距離:$distance_y 縦の移動スピード:$velocity_y" )
+
+                    // X軸の移動距離が大きすぎる場合
+                    if(Math.abs(e1.x - e2.x) > SWIPE_MAX_OFF_PATH){
+                        Log.d("MyView_onFling","横の移動距離が大きすぎます")
+
+                        //開始位置から終了位置の移動距離が指定値より大きい
+                        //Y軸の移動速度が指定値より大きい
+                    }else if(e2.y - e1.y > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY){
+                        Log.d("onFling","上から下へ")
+                        LayerService.context?.run{
+                            val intent = Intent(this,LayerService::class.java)
+                                    .setAction(LayerService.ACTION_SUSPEND)
+                            startService(intent)
+                        }
+
+                        // 終了位置から開始位置の移動距離が指定値より大きい
+                        // Y軸の移動速度が指定値より大きい
+                    }else if(e1.y - e2.y > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY){
+                        Log.d("onFling","下から上")
+                        LayerService.context?.run{
+                            val intent = Intent(this,LayerService::class.java)
+                                    .setAction(LayerService.ACTION_SUSPEND)
+                            startService(intent)
+                        }
+                    }
+                } catch (e: Exception) {
+
+                }
+                return false
+            }
+            override fun onDown(event: MotionEvent):Boolean{
+                initial = params.position - event.position
+                return true
+            }
+        })
+    }
 }

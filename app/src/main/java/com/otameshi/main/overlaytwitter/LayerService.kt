@@ -1,5 +1,6 @@
 package com.otameshi.main.overlaytwitter
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -20,6 +21,9 @@ class LayerService : Service() {
         val ACTION_STOP = "stop"
         val ACTION_RESTART = "restart"
         val ACTION_SUSPEND = "suspend"
+
+        @SuppressLint("StaticFieldLeak")
+        var context: Context? = null
     }
 
     private val notificationId = Random().nextInt()
@@ -49,6 +53,8 @@ class LayerService : Service() {
             }
         }
         startNotification()
+
+        context = applicationContext
     }
 
     /**
