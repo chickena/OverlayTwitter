@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MotionEvent
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -25,15 +23,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        webView.settings.javaScriptEnabled = true
-        webView.settings.setAppCacheEnabled(true)
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                return false
-            }
-        }
-        webView.loadUrl("https://tweetdeck.twitter.com/")
-
         button.setOnClickListener{
 
             if(hasOverlayPermission()){
@@ -44,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             }else{
                 requestOverlayPermission(REQUEST_OVERLAY_PERMISSION)
             }
+
         }
 
         button2.setOnClickListener {
@@ -57,23 +47,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-//        if(hasOverlayPermission()){
-//            val intent = Intent(this,LayerService::class.java)
-//                    .setAction(LayerService.ACTION_STOP)
-//                    .putExtra("webViewID",webView.id)
-//            startService(intent)
-//        }else{
-//            requestOverlayPermission(REQUEST_OVERLAY_PERMISSION)
-//        }
     }
 
     override fun onStop() {
         super.onStop()
-//        if(enabled && hasOverlayPermission()){
-//            val intent = Intent(this,LayerService::class.java)
-//                    .setAction(LayerService.ACTION_START)
-//            startService(intent)
-//        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

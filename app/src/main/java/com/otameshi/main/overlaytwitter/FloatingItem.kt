@@ -2,6 +2,7 @@ package com.otameshi.main.overlaytwitter
 
 import android.content.Intent
 import android.graphics.PixelFormat
+import android.graphics.Point
 import android.os.Build
 import android.util.Log
 import android.view.*
@@ -14,23 +15,30 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
         private const val SWIPE_MIN_DISTANCE = 150
         private const val SWIPE_MAX_OFF_PATH = 100
         private const val SWIPE_THRESHOLD_VELOCITY = 4000
-    }
 
+    }
+    val displaySize: Point by lazy{
+        val display = windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        size
+    }
     private val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+//            WindowManager.LayoutParams.WRAP_CONTENT,
+//            WindowManager.LayoutParams.WRAP_CONTENT,
             if (Build.VERSION.SDK_INT >= 26) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
                 WindowManager.LayoutParams.TYPE_PHONE
             },
-            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
 
             PixelFormat.TRANSLUCENT)
             .apply {
                 gravity = Gravity.TOP or Gravity.START
-                x = 100
-                y = 100
+                x = 0
+                y = 0
             }
 
     var visible: Boolean = false
@@ -39,10 +47,11 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
                 field = value
                 if (value) {
 
-                    view.viewTest.layoutParams.height = 650
-                    view.viewTest.layoutParams.width = 400
-                    view.floatingWebView.layoutParams.height = 600
-                    view.floatingWebView.layoutParams.width =  400
+                    view.viewTest.layoutParams.height = displaySize.y - 240
+                    view.viewTest.layoutParams.width = displaySize.x - 300
+                    view.floatingWebView.layoutParams.height = displaySize.y - 320
+                    view.floatingWebView.layoutParams.width =  displaySize.x - 300
+
                     setOnGestureListener()
                     windowManager.addView(view, params)
                 } else {
@@ -143,6 +152,28 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
             override fun onDown(event: MotionEvent):Boolean{
                 initial = params.position - event.position
                 return true
+            }
+        },object :ScaleGestureDetector.SimpleOnScaleGestureListener(){
+            //ピンチ中に呼ばれるやつ サイズ変更
+//            override fun onScale(detector: ScaleGestureDetector): Boolean {
+//                Log.d("aaa","bbbbb")
+//                var mScale = 1.0F
+//                mScale *= detector.scaleFactor
+//                view.viewTest.layoutParams.height *= mScale.toInt()
+//                view.viewTest.layoutParams.width *= mScale.toInt()
+//                view.floatingWebView.layoutParams.height *= mScale.toInt()
+//                view.floatingWebView.layoutParams.width *= mScale.toInt()
+//                windowManager.updateViewLayout(view,params)
+//                return true
+//            }
+
+            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                Log.d("MyView", "MyView.onScaleBegin")
+                return true
+            }
+
+            override fun onScaleEnd(detector: ScaleGestureDetector) {
+                Log.d("MyView", "MyView.onScaleEnd")
             }
         })
     }

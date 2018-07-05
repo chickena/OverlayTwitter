@@ -98,10 +98,10 @@ class LayerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(intent == null || intent.action == ACTION_START){
             startOverlay()
-        }else if(intent == null || intent.action == ACTION_SUSPEND){
+        }else if(intent.action == ACTION_SUSPEND){
 //            stopSelf()
             suspendOverlay()
-        }else if(intent == null || intent.action == ACTION_RESTART){
+        }else if(intent.action == ACTION_RESTART){
             restartOverlay()
         }else{
             stopSelf()
@@ -145,7 +145,7 @@ class LayerService : Service() {
      * オーバーレイ表示を中止する
      */
 
-    fun suspendOverlay(){
+    private fun suspendOverlay(){
         item?.run{
             view.floatingWebView.visibility = View.GONE
             view.viewTest.visibility = View.GONE
