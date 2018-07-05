@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         }
-        webView.loadUrl("https://twitter.com/")
+        webView.loadUrl("https://tweetdeck.twitter.com/")
 
         button.setOnClickListener{
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         button2.setOnClickListener {
             if(enabled && hasOverlayPermission()){
                 val intent = Intent(this,LayerService::class.java)
-                        .setAction(LayerService.ACTION_START)
+                        .setAction(LayerService.ACTION_STOP)
                 startService(intent)
             }
         }
