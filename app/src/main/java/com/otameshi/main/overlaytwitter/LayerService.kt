@@ -129,7 +129,7 @@ class LayerService : Service() {
                     return false
                 }
             }
-            item = FloatingItem(windowManager,view.floatingWebView).apply {
+            item = FloatingItem(windowManager,view).apply {
                 visible = true
             }
         }
@@ -139,9 +139,10 @@ class LayerService : Service() {
      * オーバーレイ表示を中止する
      */
 
-    private fun suspendOverlay(){
+    fun suspendOverlay(){
         item?.run{
             view.floatingWebView.visibility = View.GONE
+            view.viewTest.visibility = View.GONE
         }
     }
     private fun stopOverlay(){
@@ -153,6 +154,7 @@ class LayerService : Service() {
     private  fun restartOverlay(){
         item?.run{
             view.floatingWebView.visibility = View.VISIBLE
+            view.viewTest.visibility = View.VISIBLE
         }
     }
 }
