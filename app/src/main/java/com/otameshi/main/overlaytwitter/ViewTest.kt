@@ -61,7 +61,7 @@ class ViewTest : View {
                     //開始位置から終了位置の移動距離が指定値より大きい
                     //Y軸の移動速度が指定値より大きい
                 }else if(e2.y - e1.y > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY){
-                    Log.d("onFling","上から下")
+                    Log.d("onFling","上から下へ")
 
                     layerService.suspendOverlay()
 
