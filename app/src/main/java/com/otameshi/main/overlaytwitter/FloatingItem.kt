@@ -34,10 +34,11 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
             if (field != value) {
                 field = value
                 if (value) {
-                    val parent = view.parent as ViewGroup
-                    if(parent !=null){
-                        parent.removeAllViews()
-                    }
+
+                    view.viewTest.layoutParams.height = 650
+                    view.viewTest.layoutParams.width = 400
+                    view.floatingWebView.layoutParams.height = 600
+                    view.floatingWebView.layoutParams.width =  400
                     windowManager.addView(view, params)
                 } else {
                     windowManager.removeView(view)
@@ -48,7 +49,7 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
     private var initial: Position? = null
 
     init {
-        view.floatingWebView.setOnTouchListener { view, event ->
+        view.viewTest.setOnTouchListener { view, event ->
             Log.d(TAG, event.action.toString())
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -69,7 +70,7 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
             }
             false
         }
-        view.floatingWebView.setOnClickListener {
+        view.viewTest.setOnClickListener {
             Log.d(TAG, "onClick")
         }
     }

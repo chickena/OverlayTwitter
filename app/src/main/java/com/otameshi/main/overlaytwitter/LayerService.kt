@@ -120,18 +120,20 @@ class LayerService : Service() {
         val view = layoutInflater.inflate(R.layout.overlay,null)
         val setting = view.floatingWebView.settings
         view.floatingWebView.run{
-            val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-            settings.javaScriptEnabled = true
-            settings.setAppCacheEnabled(true)
-            //ここで呼ぶ？
-            loadUrl("https://twitter.com/?lang=ja")
-            webViewClient = object : WebViewClient() {
-                override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                    return false
+            view.viewTest.run{
+                val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+                settings.javaScriptEnabled = true
+                settings.setAppCacheEnabled(true)
+                //ここで呼ぶ？
+                loadUrl("https://twitter.com/?lang=ja")
+                webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                        return false
+                    }
                 }
-            }
-            item = FloatingItem(windowManager,view.floatingWebView).apply {
-                visible = true
+                item = FloatingItem(windowManager,view).apply {
+                    visible = true
+                }
             }
         }
     }
