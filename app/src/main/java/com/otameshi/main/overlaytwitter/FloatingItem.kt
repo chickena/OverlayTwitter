@@ -20,7 +20,7 @@ class FloatingItem(val windowManager: WindowManager, val view: View) {
             } else {
                 WindowManager.LayoutParams.TYPE_PHONE
             },
-            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,FLAG_NOT_TOUCH_MODAL,
+            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
 
             PixelFormat.TRANSLUCENT)
             .apply {
