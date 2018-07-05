@@ -1,10 +1,11 @@
 package com.otameshi.main.overlaytwitter
 
-import android.app.Notification
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
+import android.support.v4.app.NotificationCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -22,7 +23,10 @@ class LayerService : Service() {
     }
 
     private val notificationId = Random().nextInt()
-
+    private val channelId = "LayerService_notification_channel"
+    lateinit var manager: NotificationManager
+    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val name = "Twitter"
     private var item:FloatingItem? = null
     var videoCustomView: View? = null
 
@@ -31,6 +35,12 @@ class LayerService : Service() {
      */
     override fun onCreate(){
         super.onCreate()
+        lateinit var channel: NotificationChannel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channel = NotificationChannel(channelId,name,importance)
+            manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
         startNotification()
     }
 
@@ -38,21 +48,31 @@ class LayerService : Service() {
      * 通知を表示しフォアグラウンド処理に移行する
      */
     private fun startNotification(){
+
         val suspendIntent = Intent(this,LayerService::class.java).setAction(LayerService.ACTION_SUSPEND)
         val restartIntent = Intent(this,LayerService::class.java).setAction(LayerService.ACTION_RESTART)
         val stopIntent =  Intent(this,LayerService::class.java).setAction(LayerService.ACTION_STOP)
         val pendingSuspendIntent = PendingIntent.getService(this,0,suspendIntent,0)
         val pendingRestartIntent = PendingIntent.getService(this,0,restartIntent,0)
         val pendingStopIntent = PendingIntent.getService(this,0,stopIntent,0)
-        val notification = Notification.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(LayerService::class.simpleName)
-                .setContentText("Service is running.")
-                .addAction(1,"一時停止",pendingSuspendIntent)
-                .addAction(2,"再開",pendingRestartIntent)
-                .addAction(3,"終了",pendingStopIntent)
-                .build()
-        startForeground(notificationId,notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val builder = NotificationCompat.Builder(this, channelId)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.notification_icon_background)
+                    .addAction(1, "一時停止", pendingSuspendIntent)
+                    .addAction(2, "再開", pendingRestartIntent)
+                    .addAction(3, "終了", pendingStopIntent)
+            startForeground(notificationId, builder.build())
+        }else {
+            val notification = Notification.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(LayerService::class.simpleName)
+                    .addAction(1, "一時停止", pendingSuspendIntent)
+                    .addAction(2, "再開", pendingRestartIntent)
+                    .addAction(3, "終了", pendingStopIntent)
+                    .build()
+            startForeground(notificationId, notification)
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
